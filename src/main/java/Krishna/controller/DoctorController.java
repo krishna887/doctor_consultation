@@ -5,93 +5,79 @@ import Krishna.model.Doctor;
 
 import Krishna.repository.ConsultationRepository;
 import Krishna.repository.DoctorRepository;
+import Krishna.service.Service;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
+
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-// we have to make seperate package for service and just call the service method here
+
 @Controller("/doctor")
-public class DoctorController {
-    @Inject
-    private DoctorRepository doctorRepository;
-    @Inject
-    private ConsultationRepository consultationRepository;
-    @Get ("/")
-    public Iterable<Doctor>getDoctor(){
-        return doctorRepository.findAll();
-    }
-    @Post("/create")
-    public Doctor createDoctor(@Body Doctor doctor){
-        return doctorRepository.save(doctor);
-    }
-    @Post("/update")
-    public Doctor updateDoctor(@Body Doctor doctor){
-        Optional<Doctor> doctor1=doctorRepository.findById(doctor.getId());
-        Doctor doctor2=doctor1.get();
-        doctor2.setName(doctor.getName());
-        doctor2.setNmc_no(doctor.getNmc_no());
-        return doctorRepository.update(doctor2);
+public  class DoctorController {
+
+    private final Doctor doctor;
+
+    private final Consultation consultation;
+    private final Service service;
+
+
+    public DoctorController(Service service, DoctorRepository doctorRepository , Doctor doctor, Consultation consultation, ConsultationRepository consultationRepository) {
+        this.service = service;
+        this.doctor=doctor;
+        this.consultation=consultation;
 
     }
+
+
+    @Get ("/")
+    
+    public List<Doctor> get1(){ return service.getDoctor();}
+
+    @Post("/create")
+    public Doctor post(){ return  service.createDoctor(doctor);}
+
+    @Post("/update")
+    public  Doctor update(){
+        return  service.updateDoctor(doctor);
+    };
     @Delete("/delete/{id}")
-    public Doctor deleteDoctor(@PathVariable Long id){
-        Optional<Doctor> doctor = doctorRepository.findById(id);
-        Doctor doctor1 = doctor.get();
-        doctorRepository.delete(doctor1);
-        return doctor1;
-    }
+    public  Doctor delete(long id){
+        return  service.deleteDoctor(id);
+    };
 
     @Get("/consultations")
-    public Iterable<Consultation> allConsultations(){
-        return consultationRepository.findAll();
-
+    public List<Consultation> getC(@PathVariable Long id){
+        return (List<Consultation>) service.allConsultations();
     }
+
+
+
+
 
     @Post("/consultations/create")
-    public Consultation createConsultations(@Body Consultation consultation){
-        return consultationRepository.save(consultation);
+    public Consultation postc(){
+        return service.createConsultations(consultation);
     }
+
+
+
 
     @Get("consultations/{id}")
-    public List<Consultation> getConsultations(@PathVariable Long id){
-        List<Consultation> consultation = consultationRepository.findByDoctorId(id);
+    public List<Consultation> getCc(@PathVariable Long id){
+        return service.getConsultations(id);
+    };
 
-        return consultation;
-
-
-    }
     @Status(HttpStatus.OK)
     @Get("consultations/total/{id}")
-    public Map<String, Double> getDuration(@PathVariable Long id){
-        List<Consultation> consultations = getConsultations(id);
-
-        Duration totalDuration = Duration.ZERO;
-
-        for (Consultation consultation : consultations) {
-            Duration consultationDuration = consultation.getDuration();
-            if (consultationDuration != null) {
-                totalDuration = totalDuration.plus(consultationDuration);
-            }
-        }
-
-        Map<String, Double> response = new HashMap<>();
-        response.put("totalDuration", totalDuration.toHours() +
-                (totalDuration.toMinutes() % 60) / 60.0);
-        return response;
-
-
-    }
+    public  Map<String, Double> getDurat(@PathVariable Long id){
+        return service.getDuration(id);
+    };
     @Get("total/{id}")
-    public BigDecimal getTime(@PathVariable Long id){
-        BigDecimal duration = consultationRepository.getTotalConsultationTimeByDoctorId(id);
-        return duration;
-    }
+    public  BigDecimal getTim(@PathVariable Long id){
+        return service.getTime(id);
+    };
 
 }

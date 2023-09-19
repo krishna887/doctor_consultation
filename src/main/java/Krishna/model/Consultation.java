@@ -1,5 +1,6 @@
 package Krishna.model;
 
+import io.micronaut.context.annotation.Bean;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import java.time.Duration;
 @Entity
 @Introspected
 @Serdeable
+@Bean
 
 public class Consultation {
     @Id

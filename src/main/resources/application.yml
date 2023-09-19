@@ -1,0 +1,5 @@
+micronaut:
+  application:
+    logging:
+      level:
+        'io.micronaut.context.condition': TRACE

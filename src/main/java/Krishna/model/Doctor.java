@@ -1,6 +1,7 @@
 package Krishna.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.micronaut.context.annotation.Bean;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Introspected
 @Serdeable
+@Bean
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
