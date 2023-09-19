@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+// we have to make seperate package for service and just call the service method here
 @Controller("/doctor")
 public class DoctorController {
     @Inject
